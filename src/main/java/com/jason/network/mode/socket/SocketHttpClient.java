@@ -1,4 +1,6 @@
-package com.jason.network.socket;
+package com.jason.network.mode.socket;
+
+import com.jason.network.constant.HttpConstant;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -8,13 +10,10 @@ import java.net.SocketAddress;
 /**
  * Created by jason-geng on 8/13/17.
  */
-public class HttpClient {
-
-    private static final String HOST = "www.baidu.com";
-    private static final int PORT = 80;
+public class SocketHttpClient {
 
     public static void main(String[] args) {
-        new HttpClient().start();
+        new SocketHttpClient().start();
 
     }
 
@@ -25,14 +24,14 @@ public class HttpClient {
 
         try {
             // 设置 socket 连接
-            SocketAddress remote = new InetSocketAddress(HOST, PORT);
+            SocketAddress remote = new InetSocketAddress(HttpConstant.HOST, HttpConstant.PORT);
             socket.setSoTimeout(5000);
             socket.connect(remote);
 
             // 发起请求
             PrintWriter writer = getWriter(socket);
-            String requestContent = getRequestContent();
-            writer.write(requestContent);
+            System.out.println(HttpConstant.REQUEST);
+            writer.write(HttpConstant.REQUEST);
             writer.flush();
 
             // 读取响应
@@ -62,13 +61,6 @@ public class HttpClient {
     private PrintWriter getWriter(Socket socket) throws IOException {
         OutputStream out = socket.getOutputStream();
         return new PrintWriter(new OutputStreamWriter(out));
-    }
-
-    private String getRequestContent(){
-        return "GET / HTTP/1.1\r\n" +
-                "Host: " + HOST + "\r\n" +
-                "User-Agent: curl/7.43.0\r\n" +
-                "Accept: */*\r\n\r\n";
     }
 
 }
