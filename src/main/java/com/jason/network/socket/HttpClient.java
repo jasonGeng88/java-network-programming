@@ -54,15 +54,6 @@ public class HttpClient {
 
     }
 
-    private String getRequestContent(){
-        StringBuilder sb = new StringBuilder()
-                .append("GET / HTTP/1.1\r\n")
-                .append("Host: " + HOST + "\r\n")
-                .append("User-Agent: curl/7.43.0\r\n")
-                .append("Accept: */*\r\n\r\n");
-        return sb.toString();
-    }
-
     private BufferedReader getReader(Socket socket) throws IOException {
         InputStream in = socket.getInputStream();
         return new BufferedReader(new InputStreamReader(in));
@@ -72,4 +63,12 @@ public class HttpClient {
         OutputStream out = socket.getOutputStream();
         return new PrintWriter(new OutputStreamWriter(out));
     }
+
+    private String getRequestContent(){
+        return "GET / HTTP/1.1\r\n" +
+                "Host: " + HOST + "\r\n" +
+                "User-Agent: curl/7.43.0\r\n" +
+                "Accept: */*\r\n\r\n";
+    }
+
 }
