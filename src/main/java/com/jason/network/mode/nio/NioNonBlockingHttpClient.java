@@ -1,4 +1,6 @@
-package com.jason.network.nio;
+package com.jason.network.mode.nio;
+
+import com.jason.network.constant.HttpConstant;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,9 +17,6 @@ import java.util.Set;
  * Created by jason-geng on 8/15/17.
  */
 public class NioNonBlockingHttpClient {
-
-    private final static String HOST = "www.baidu.com";
-    private final static int PORT = 80;
 
     private static Selector selector;
     private Charset charset = Charset.forName("utf8");
@@ -46,16 +45,15 @@ public class NioNonBlockingHttpClient {
     public void request() throws IOException {
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.socket().setSoTimeout(5000);
-        SocketAddress remote = new InetSocketAddress(HOST, PORT);
+        SocketAddress remote = new InetSocketAddress(HttpConstant.HOST, HttpConstant.PORT);
         socketChannel.connect(remote);
         socketChannel.configureBlocking(false);
         socketChannel.register(selector,
                         SelectionKey.OP_READ
                         | SelectionKey.OP_WRITE);
 
-        String requestContent = getRequestContent();
-        System.out.println(requestContent);
-        socketChannel.write(charset.encode(requestContent));
+        System.out.println(HttpConstant.REQUEST);
+        socketChannel.write(charset.encode(HttpConstant.REQUEST));
     }
 
     public void select() throws IOException {
@@ -90,13 +88,5 @@ public class NioNonBlockingHttpClient {
         }
 
         System.out.println(receiveData);
-    }
-
-
-    private String getRequestContent(){
-        return "GET / HTTP/1.1\r\n" +
-                "Host: " + HOST + "\r\n" +
-                "User-Agent: curl/7.43.0\r\n" +
-                "Accept: */*\r\n\r\n";
     }
 }
