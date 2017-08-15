@@ -19,8 +19,8 @@ public class NioNonBlockingHttpClient {
     private final static String HOST = "www.baidu.com";
     private final static int PORT = 80;
 
-//    private SocketChannel socketChannel;
     private static Selector selector;
+    private Charset charset = Charset.forName("utf8");
 
     static {
         try {
@@ -30,8 +30,6 @@ public class NioNonBlockingHttpClient {
         }
     }
 
-    private Charset charset;
-    private ByteBuffer receiveBuffer = ByteBuffer.allocate(1024);
 
     public static void main(String[] args) throws IOException {
 
@@ -46,15 +44,13 @@ public class NioNonBlockingHttpClient {
     }
 
     public void request() throws IOException {
-        charset = Charset.forName("utf8");
-
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.socket().setSoTimeout(5000);
         SocketAddress remote = new InetSocketAddress(HOST, PORT);
         socketChannel.connect(remote);
         socketChannel.configureBlocking(false);
         socketChannel.register(selector,
-                SelectionKey.OP_READ
+                        SelectionKey.OP_READ
                         | SelectionKey.OP_WRITE);
 
         String requestContent = getRequestContent();
