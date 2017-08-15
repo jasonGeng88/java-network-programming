@@ -12,6 +12,8 @@ import io.netty.util.CharsetUtil;
  */
 public class HttpClientHandler extends SimpleChannelInboundHandler {
 
+    private StringBuilder sb = new StringBuilder();
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
@@ -25,8 +27,15 @@ public class HttpClientHandler extends SimpleChannelInboundHandler {
         ByteBuf in = (ByteBuf) o;
 
         while (in.isReadable()) { // (1)
-            System.out.print((char)in.readByte());
-            System.out.flush();
+            sb.append((char)in.readByte());
         }
+
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        System.out.println(sb.toString());
+        ctx.channel().close();
+        ctx.close();
     }
 }
