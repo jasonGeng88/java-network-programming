@@ -2,6 +2,7 @@ package com.jason.network.mode.netty;
 
 import com.jason.network.constant.HttpConstant;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -20,12 +21,12 @@ public class NettyHttpClient {
         NioEventLoopGroup group = new NioEventLoopGroup();
         b.group(group)
                 .channel(NioSocketChannel.class)
-                .remoteAddress(HttpConstant.HOST, HttpConstant.PORT)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new HttpClientChannelInitializer());
 
-        for (int i = 0; i < 3; i++) {
-            b.connect().sync();
+        for (String host : HttpConstant.HOSTS) {
+            ChannelFuture cf = b.connect(host, HttpConstant.PORT).sync();
+            cf.channel().closeFuture().sync();
         }
 
     }

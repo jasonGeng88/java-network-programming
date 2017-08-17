@@ -1,5 +1,7 @@
 package com.jason.network.mode.socket;
 
+import com.jason.network.constant.HttpConstant;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,14 +14,17 @@ public class ThreadPoolApplication {
 
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
-        for (int i = 0; i < 10; i++) {
+        for (final String host: HttpConstant.HOSTS) {
+
             Thread t = new Thread(new Runnable() {
                 public void run() {
-                    new SocketHttpClient().start();
+                    new SocketHttpClient().start(host, HttpConstant.PORT);
                 }
             });
 
             executorService.submit(t);
+            new SocketHttpClient().start(host, HttpConstant.PORT);
+
         }
 
     }

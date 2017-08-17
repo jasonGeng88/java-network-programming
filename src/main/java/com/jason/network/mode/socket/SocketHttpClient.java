@@ -1,6 +1,6 @@
 package com.jason.network.mode.socket;
 
-import com.jason.network.constant.HttpConstant;
+import com.jason.network.util.HttpUtil;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -12,27 +12,21 @@ import java.net.SocketAddress;
  */
 public class SocketHttpClient {
 
-    public static void main(String[] args) {
-
-        new SocketHttpClient().start();
-
-    }
-
-    public void start() {
+    public void start(String host, int port) {
 
         // 初始化 socket
         Socket socket = new Socket();
 
         try {
             // 设置 socket 连接
-            SocketAddress remote = new InetSocketAddress(HttpConstant.HOST, HttpConstant.PORT);
+            SocketAddress remote = new InetSocketAddress(host, port);
             socket.setSoTimeout(5000);
             socket.connect(remote);
 
             // 发起请求
             PrintWriter writer = getWriter(socket);
-            System.out.println(HttpConstant.REQUEST);
-            writer.write(HttpConstant.REQUEST);
+            System.out.println(HttpUtil.compositeRequest(host));
+            writer.write(HttpUtil.compositeRequest(host));
             writer.flush();
 
             // 读取响应

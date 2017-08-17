@@ -1,11 +1,13 @@
 package com.jason.network.mode.netty;
 
-import com.jason.network.constant.HttpConstant;
+import com.jason.network.util.HttpUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
+
+import java.net.InetSocketAddress;
 
 /**
  * Created by jason-geng on 8/16/17.
@@ -17,8 +19,10 @@ public class HttpClientHandler extends SimpleChannelInboundHandler {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
-        System.out.println(HttpConstant.REQUEST);
-        ctx.writeAndFlush(Unpooled.copiedBuffer(HttpConstant.REQUEST, CharsetUtil.UTF_8));
+        InetSocketAddress remote = (InetSocketAddress) ctx.channel().remoteAddress();
+        String request = HttpUtil.compositeRequest(remote.getHostName());
+        System.out.println(request);
+        ctx.writeAndFlush(Unpooled.copiedBuffer(request, CharsetUtil.UTF_8));
 
     }
 

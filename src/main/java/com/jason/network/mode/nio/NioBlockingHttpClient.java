@@ -1,6 +1,7 @@
 package com.jason.network.mode.nio;
 
 import com.jason.network.constant.HttpConstant;
+import com.jason.network.util.HttpUtil;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -14,18 +15,25 @@ import java.nio.channels.SocketChannel;
 public class NioBlockingHttpClient {
 
     private SocketChannel socketChannel;
+    private String host;
 
 
     public static void main(String[] args) throws IOException {
-        NioBlockingHttpClient client = new NioBlockingHttpClient();
 
-        client.request();
+        for (String host: HttpConstant.HOSTS) {
+
+            NioBlockingHttpClient client = new NioBlockingHttpClient(host, HttpConstant.PORT);
+            client.request();
+
+        }
+
     }
 
-    public NioBlockingHttpClient() throws IOException {
+    public NioBlockingHttpClient(String host, int port) throws IOException {
+        this.host = host;
         socketChannel = SocketChannel.open();
         socketChannel.socket().setSoTimeout(5000);
-        SocketAddress remote = new InetSocketAddress(HttpConstant.HOST, HttpConstant.PORT);
+        SocketAddress remote = new InetSocketAddress(this.host, port);
         this.socketChannel.connect(remote);
     }
 
@@ -43,13 +51,13 @@ public class NioBlockingHttpClient {
         PrintWriter pw = getWriter(socketChannel.socket());
         BufferedReader br = getReader(socketChannel.socket());
 
-        System.out.println(HttpConstant.REQUEST);
+        System.out.println(HttpUtil.compositeRequest(host));
 
-        pw.write(HttpConstant.REQUEST);
+        pw.write(HttpUtil.compositeRequest(host));
         pw.flush();
         String msg;
         while ((msg = br.readLine()) != null){
-            System.out.println("received:");
+//            System.out.println("received:");
             System.out.println(msg);
         }
     }

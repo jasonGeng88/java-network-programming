@@ -1,6 +1,7 @@
 package com.jason.network.mode.nio;
 
 import com.jason.network.constant.HttpConstant;
+import com.jason.network.util.HttpUtil;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -34,26 +35,28 @@ public class NioNonBlockingHttpClient {
 
         NioNonBlockingHttpClient client = new NioNonBlockingHttpClient();
 
-        for (int i = 0; i < 3; i++) {
-            client.request();
+        for (String host: HttpConstant.HOSTS) {
+
+            client.request(host, HttpConstant.PORT);
+
         }
 
         client.select();
 
     }
 
-    public void request() throws IOException {
+    public void request(String host, int port) throws IOException {
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.socket().setSoTimeout(5000);
-        SocketAddress remote = new InetSocketAddress(HttpConstant.HOST, HttpConstant.PORT);
+        SocketAddress remote = new InetSocketAddress(host, port);
         socketChannel.connect(remote);
         socketChannel.configureBlocking(false);
         socketChannel.register(selector,
                         SelectionKey.OP_READ
                         | SelectionKey.OP_WRITE);
 
-        System.out.println(HttpConstant.REQUEST);
-        socketChannel.write(charset.encode(HttpConstant.REQUEST));
+        System.out.println(HttpUtil.compositeRequest(host));
+        socketChannel.write(charset.encode(HttpUtil.compositeRequest(host)));
     }
 
     public void select() throws IOException {

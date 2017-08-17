@@ -5,11 +5,7 @@ package com.jason.network.constant;
  */
 public interface HttpConstant {
 
-    String HOST = "www.baidu.com";
-    int PORT = 80;
+    String[] HOSTS = {"www.baidu.com", "www.weibo.com", "www.sina.com"};
 
-    String REQUEST = "GET / HTTP/1.1\r\n" +
-            "Host: " + HOST + "\r\n" +
-            "User-Agent: curl/7.43.0\r\n" +
-            "Accept: */*\r\n\r\n";
+    int PORT = 80;
 }
