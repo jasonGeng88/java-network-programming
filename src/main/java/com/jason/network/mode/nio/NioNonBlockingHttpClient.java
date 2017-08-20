@@ -49,14 +49,12 @@ public class NioNonBlockingHttpClient {
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.socket().setSoTimeout(5000);
         SocketAddress remote = new InetSocketAddress(host, port);
-        socketChannel.connect(remote);
         socketChannel.configureBlocking(false);
+        socketChannel.connect(remote);
         socketChannel.register(selector,
-                        SelectionKey.OP_READ
+                        SelectionKey.OP_CONNECT
+                        | SelectionKey.OP_READ
                         | SelectionKey.OP_WRITE);
-
-        System.out.println(HttpUtil.compositeRequest(host));
-        socketChannel.write(charset.encode(HttpUtil.compositeRequest(host)));
     }
 
     public void select() throws IOException {
@@ -70,11 +68,38 @@ public class NioNonBlockingHttpClient {
                 SelectionKey key = (SelectionKey)it.next();
                 it.remove();
 
-                if (key.isReadable()){
+                if (key.isConnectable()){
+                    connect(key);
+                }
+                else if (key.isWritable()){
+                    write(key);
+                }
+                else if (key.isReadable()){
                     receive(key);
                 }
             }
         }
+    }
+
+    private void connect(SelectionKey key) throws IOException {
+        SocketChannel channel = (SocketChannel) key.channel();
+        channel.finishConnect();
+        InetSocketAddress remote = (InetSocketAddress) channel.socket().getRemoteSocketAddress();
+        String host = remote.getHostName();
+        int port = remote.getPort();
+        System.out.println(String.format("访问地址: %s:%s 连接成功!", host, port));
+    }
+
+    private void write(SelectionKey key) throws IOException {
+        SocketChannel channel = (SocketChannel) key.channel();
+        InetSocketAddress remote = (InetSocketAddress) channel.socket().getRemoteSocketAddress();
+        String host = remote.getHostName();
+
+        String request = HttpUtil.compositeRequest(host);
+        System.out.println(request);
+
+        channel.write(charset.encode(request));
+        key.interestOps(SelectionKey.OP_READ);
     }
 
     private void receive(SelectionKey key) throws IOException {
@@ -84,7 +109,7 @@ public class NioNonBlockingHttpClient {
         buffer.flip();
         String receiveData = charset.decode(buffer).toString();
 
-        if (!receiveData.contains("\n")) {
+        if ("".equals(receiveData)) {
             key.cancel();
             channel.close();
             return;

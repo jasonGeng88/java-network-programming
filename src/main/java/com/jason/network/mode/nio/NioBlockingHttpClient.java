@@ -37,16 +37,6 @@ public class NioBlockingHttpClient {
         this.socketChannel.connect(remote);
     }
 
-    private PrintWriter getWriter(Socket socket) throws IOException {
-        OutputStream out = socket.getOutputStream();
-        return new PrintWriter(out);
-    }
-
-    private BufferedReader getReader(Socket socket) throws IOException {
-        InputStream in = socket.getInputStream();
-        return new BufferedReader(new InputStreamReader(in));
-    }
-
     public void request() throws IOException {
         PrintWriter pw = getWriter(socketChannel.socket());
         BufferedReader br = getReader(socketChannel.socket());
@@ -60,5 +50,15 @@ public class NioBlockingHttpClient {
 //            System.out.println("received:");
             System.out.println(msg);
         }
+    }
+
+    private PrintWriter getWriter(Socket socket) throws IOException {
+        OutputStream out = socket.getOutputStream();
+        return new PrintWriter(out);
+    }
+
+    private BufferedReader getReader(Socket socket) throws IOException {
+        InputStream in = socket.getInputStream();
+        return new BufferedReader(new InputStreamReader(in));
     }
 }
