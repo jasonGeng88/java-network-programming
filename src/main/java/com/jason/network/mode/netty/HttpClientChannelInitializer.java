@@ -9,6 +9,6 @@ import io.netty.channel.ChannelInitializer;
 public class HttpClientChannelInitializer extends ChannelInitializer {
     @Override
     protected void initChannel(Channel channel) throws Exception {
-        channel.pipeline().addLast(new HttpClientHandler());
+//        channel.pipeline().addLast(new HttpClientHandler());
     }
 }
