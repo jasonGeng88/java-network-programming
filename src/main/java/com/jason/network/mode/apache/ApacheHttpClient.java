@@ -36,7 +36,7 @@ public class ApacheHttpClient {
                 .setConnectTimeout(1000)
                 .setSoLinger(0)
                 .setTcpNoDelay(true)
-                .setSoReuseAddress(true)
+                .setSoReuseAddress(false)
                 .build();
         client = HttpAsyncClients.custom().setDefaultIOReactorConfig(config).build();
         client.start();
